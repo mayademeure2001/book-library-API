@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
 from ..schemas.authors import Author, AuthorCreate
-from ..dependencies import get_db, verify_api_key
+from ..dependencies import get_db, verify_api_key, verify_admin_role
 from ..utils.pagination import pagination
 
 router = APIRouter(
@@ -29,7 +29,8 @@ async def read_authors(
 async def create_author(
     author: AuthorCreate, 
     db=Depends(get_db),
-    _: str = Depends(verify_api_key)
+    _: str = Depends(verify_api_key),
+    __: str = Depends(verify_admin_role)
 ):
     try:
         new_id = max(db.authors.keys() or (0,)) + 1
@@ -49,7 +50,8 @@ async def create_author(
 async def delete_author(
     author_id: int, 
     db=Depends(get_db),
-    _: str = Depends(verify_api_key)
+    _: str = Depends(verify_api_key),
+    __: str = Depends(verify_admin_role)
 ):
     try:
         if author_id not in db.authors:
