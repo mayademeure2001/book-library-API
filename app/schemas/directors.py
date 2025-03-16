@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 from .base import TimeStampMixin
 
-class AuthorBase(BaseModel):
+class DirectorBase(BaseModel):
     name: str
     bio: Optional[str] = None
 
@@ -20,10 +20,10 @@ class AuthorBase(BaseModel):
                 raise ValueError("Bio is too long (max 5000 characters)")
         return v
 
-class AuthorCreate(AuthorBase):
+class DirectorCreate(DirectorBase):
     pass
 
-class Author(AuthorBase, TimeStampMixin):
+class Director(DirectorBase, TimeStampMixin):
     id: int
     
     class Config:

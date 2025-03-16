@@ -6,8 +6,8 @@ class Pagination:
 
     async def __call__(
         self,
-        skip: int = Query(0, ge=0, description="Number of records to skip"),
-        limit: int = Query(25, ge=1, description="Number of records to return"),
+        skip: int = Query(0, ge=0),
+        limit: int = Query(25, ge=1),
     ) -> tuple[int, int]:
         capped_limit = min(self.maximum_limit, limit)
         return (skip, capped_limit)

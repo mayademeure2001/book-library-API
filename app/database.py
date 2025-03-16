@@ -1,15 +1,15 @@
-from .schemas.authors import Author
-from .schemas.books import Book
+from .schemas.directors import Director
+from .schemas.movies import Movie
 from .schemas.reviews import Review
-from .schemas.reading_lists import ReadingList
-from .schemas.reading_progress import ReadingProgress
+from .schemas.watchlists import WatchList
+from .schemas.viewing_history import ViewingHistory
 
 class DummyDatabase:
-    authors: dict[int, Author] = {}
-    books: dict[int, Book] = {}
+    directors: dict[int, Director] = {}
+    movies: dict[int, Movie] = {}
     reviews: dict[int, Review] = {}
-    reading_lists: dict[int, ReadingList] = {}
-    reading_progress: dict[int, ReadingProgress] = {}
+    watchlists: dict[int, WatchList] = {}
+    viewing_history: dict[int, ViewingHistory] = {}
 
 
 db = DummyDatabase() 

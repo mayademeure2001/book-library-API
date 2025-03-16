@@ -1,13 +1,13 @@
-from .authors import router as authors_router
-from .books import router as books_router
+from .directors import router as directors_router
+from .movies import router as movies_router
 from .reviews import router as reviews_router
-from .reading_lists import router as reading_lists_router
-from .reading_progress import router as reading_progress_router
+from .watchlists import router as watchlists_router
+from .viewing_history import router as viewing_history_router
 
 __all__ = [
-    "authors_router",
-    "books_router",
+    "directors_router",
+    "movies_router",
     "reviews_router",
-    "reading_lists_router",
-    "reading_progress_router"
+    "watchlists_router",
+    "viewing_history_router"
 ]

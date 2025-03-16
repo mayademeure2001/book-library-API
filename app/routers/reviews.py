@@ -48,8 +48,8 @@ async def create_review(
     _: str = Depends(verify_api_key)
 ):
     try:
-        if review.book_id not in db.books:
-            raise KeyError("Book not found")
+        if review.movie_id not in db.movies:
+            raise KeyError("Movie not found")
         
         # Validate rating
         if isinstance(review.rating, int) and not (1 <= review.rating <= 5):

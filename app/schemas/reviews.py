@@ -6,7 +6,7 @@ from .base import TimeStampMixin
 class ReviewBase(BaseModel):
     rating: int | str = Field(description="Rating as number (1-5) or text")
     comment: Optional[str] = None
-    book_id: int
+    movie_id: int
 
     @field_validator("rating")
     def validate_rating(cls, v: int | str):

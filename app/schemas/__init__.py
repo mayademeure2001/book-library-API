@@ -1,29 +1,29 @@
-from .authors import Author, AuthorCreate, AuthorBase
-from .books import Book, BookCreate, BookBase
+from .directors import Director, DirectorCreate, DirectorBase
+from .movies import Movie, MovieCreate, MovieBase
 from .reviews import Review, ReviewCreate, ReviewBase
-from .reading_lists import ReadingList, ReadingListCreate, ReadingListBase
-from .reading_progress import (
-    ReadingProgress, ReadingProgressCreate, ReadingProgressBase,
-    ReadingStatus
+from .watchlists import WatchList, WatchListCreate, WatchListBase
+from .viewing_history import (
+    ViewingHistory, ViewingHistoryCreate, ViewingHistoryBase,
+    ViewingStatus
 )
 from .base import TimeStampMixin
 
 __all__ = [
-    'Author',
-    'AuthorCreate',
-    'AuthorBase',
-    'Book',
-    'BookCreate',
-    'BookBase',
+    'Director',
+    'DirectorCreate',
+    'DirectorBase',
+    'Movie',
+    'MovieCreate',
+    'MovieBase',
     'Review',
     'ReviewCreate',
     'ReviewBase',
-    'ReadingList',
-    'ReadingListCreate',
-    'ReadingListBase',
-    'ReadingProgress',
-    'ReadingProgressCreate',
-    'ReadingProgressBase',
-    'ReadingStatus',
+    'WatchList',
+    'WatchListCreate',
+    'WatchListBase',
+    'ViewingHistory',
+    'ViewingHistoryCreate',
+    'ViewingHistoryBase',
+    'ViewingStatus',
     'TimeStampMixin',
 ] 

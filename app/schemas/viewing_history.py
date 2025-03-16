@@ -4,26 +4,26 @@ from typing import Optional
 from enum import Enum
 from .base import TimeStampMixin
 
-class ReadingStatus(str, Enum):
+class ViewingStatus(str, Enum):
     NOT_STARTED = "not_started"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     ON_HOLD = "on_hold"
     DROPPED = "dropped"
 
-class ReadingProgressBase(BaseModel):
-    book_id: int
-    status: ReadingStatus
-    current_page: int | str | None = None
-    total_pages: Optional[int] = None
+class ViewingHistoryBase(BaseModel):
+    movie_id: int
+    status: ViewingStatus
+    current_minute: int | str | None = None
+    runtime_minutes: Optional[int] = None
     notes: Optional[str] = None
 
-    @field_validator("current_page")
-    def validate_current_page(cls, v: int | str | None, values):
+    @field_validator("current_minute")
+    def validate_current_minute(cls, v: int | str | None, values):
         if v is None:
             return v
         if isinstance(v, int) and v < 0:
-            raise ValueError("Current page cannot be negative")
+            raise ValueError("Current minute cannot be negative")
         return v
 
     @field_validator("notes")
@@ -32,10 +32,10 @@ class ReadingProgressBase(BaseModel):
             raise ValueError("Notes must not exceed 500 characters")
         return v
 
-class ReadingProgressCreate(ReadingProgressBase):
+class ViewingHistoryCreate(ViewingHistoryBase):
     pass
 
-class ReadingProgress(ReadingProgressBase, TimeStampMixin):
+class ViewingHistory(ViewingHistoryBase, TimeStampMixin):
     id: int
     
     class Config:

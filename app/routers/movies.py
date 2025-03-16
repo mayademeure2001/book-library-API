@@ -1,34 +1,34 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List, Optional
-from ..schemas.books import Book, BookCreate
+from ..schemas.movies import Movie, MovieCreate
 from ..dependencies import get_db, verify_api_key
 from ..utils.pagination import pagination
 
 router = APIRouter(
-    prefix="/books",
-    tags=["books"]
+    prefix="/movies",
+    tags=["movies"]
 )
 
-@router.get("/", response_model=List[Book])
-async def read_books(
+@router.get("/", response_model=List[Movie])
+async def read_movies(
     genre: Optional[str] = None,
-    author_id: Optional[int] = None,
+    director_id: Optional[int] = None,
     pagination_params: tuple[int, int] = Depends(pagination),
     db=Depends(get_db),
     _: str = Depends(verify_api_key)
 ):
     try:
         skip, limit = pagination_params
-        books = list(db.books.values())
+        movies = list(db.movies.values())
         
         if genre:
-            books = [book for book in books if book.genre.lower() == genre.lower()]
-        if author_id:
-            if author_id not in db.authors:
-                raise KeyError("Author not found")
-            books = [book for book in books if book.author_id == author_id]
+            movies = [movie for movie in movies if movie.genre.lower() == genre.lower()]
+        if director_id:
+            if director_id not in db.directors:
+                raise KeyError("Director not found")
+            movies = [movie for movie in movies if movie.director_id == director_id]
         
-        return books[skip : skip + limit]
+        return movies[skip : skip + limit]
     
     except KeyError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
@@ -37,41 +37,41 @@ async def read_books(
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
 
-@router.get("/{book_id}", response_model=Book)
-async def read_book(
-    book_id: int, 
+@router.get("/{movie_id}", response_model=Movie)
+async def read_movie(
+    movie_id: int, 
     db=Depends(get_db),
     _: str = Depends(verify_api_key)
 ):
     try:
-        if book_id not in db.books:
-            raise KeyError("Book not found")
-        return db.books[book_id]
+        if movie_id not in db.movies:
+            raise KeyError("Movie not found")
+        return db.movies[movie_id]
     
     except KeyError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
 
-@router.post("/", response_model=Book)
-async def create_book(
-    book: BookCreate, 
+@router.post("/", response_model=Movie)
+async def create_movie(
+    movie: MovieCreate, 
     db=Depends(get_db),
     _: str = Depends(verify_api_key)
 ):
     try:
-        if book.author_id not in db.authors:
-            raise KeyError("Author not found")
+        if movie.director_id not in db.directors:
+            raise KeyError("Director not found")
         
-        if not (10 <= len(book.isbn) <= 13):
-            raise ValueError("Invalid ISBN length")
+        if not movie.imdb_id.startswith('tt'):
+            raise ValueError("Invalid IMDB ID format")
         
-        new_book = Book(
-            id=len(db.books) + 1,
-            **book.dict()
+        new_movie = Movie(
+            id=len(db.movies) + 1,
+            **movie.dict()
         )
-        db.books[new_book.id] = new_book
-        return new_book
+        db.movies[new_movie.id] = new_movie
+        return new_movie
     
     except KeyError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
@@ -80,35 +80,35 @@ async def create_book(
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
 
-@router.delete("/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_book(
-    book_id: int, 
+@router.delete("/{movie_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_movie(
+    movie_id: int, 
     db=Depends(get_db),
     _: str = Depends(verify_api_key)
 ):
     try:
-        if book_id not in db.books:
-            raise KeyError("Book not found")
+        if movie_id not in db.movies:
+            raise KeyError("Movie not found")
         
         # Delete associated reviews
         db.reviews = {
             k: v for k, v in db.reviews.items()
-            if v.book_id != book_id
+            if v.movie_id != movie_id
         }
         
-        # Remove from reading lists
-        for reading_list in db.reading_lists.values():
-            if book_id in reading_list.book_ids:
-                reading_list.book_ids.remove(book_id)
+        # Remove from watchlists
+        for watchlist in db.watchlists.values():
+            if movie_id in watchlist.movie_ids:
+                watchlist.movie_ids.remove(movie_id)
         
-        # Delete reading progress
-        db.reading_progress = {
-            k: v for k, v in db.reading_progress.items()
-            if v.book_id != book_id
+        # Delete viewing history
+        db.viewing_history = {
+            k: v for k, v in db.viewing_history.items()
+            if v.movie_id != movie_id
         }
         
-        del db.books[book_id]
-        return {"message": "Book and related items deleted"}
+        del db.movies[movie_id]
+        return {"message": "Movie and related items deleted"}
     
     except KeyError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
